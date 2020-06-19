@@ -3,26 +3,29 @@ let db;
 const request = indexedDB.open("budget", 1);
 
 request.onupgradeneeded = function (event) {
-  console.log("this.onupgradeneeded");
+  console.log("onupgradeneeded");
    // create object store called "pending" and set autoIncrement to true
   const db = event.target.result;
   db.createObjectStore("pending", { autoIncrement: true });
 };
 
-request.onsuccess = function(event) {
+request.onsuccess = function (event) {
+  console.log("onSuccess");
   db = event.target.result;
 
   // check if app is online before reading from db
   if (navigator.onLine) {
+    console.log("navigator is online, checking database");
     checkDatabase();
   }
 };
 
-request.onerror = function(event) {
+request.onerror = function (event) {
   console.log("Woops! " + event.target.errorCode);
 };
 
 function saveRecord(record) {
+  console.log("SaveRecord");
   // create a transaction on the pending db with readwrite access
   const transaction = db.transaction(["pending"], "readwrite");
 
@@ -34,6 +37,7 @@ function saveRecord(record) {
 }
 
 function checkDatabase() {
+  console.log("CheckDatabase");
   // open a transaction on your pending db
   const transaction = db.transaction(["pending"], "readwrite");
   // access your pending object store
@@ -41,7 +45,8 @@ function checkDatabase() {
   // get all records from store and set to a variable
   const getAll = store.getAll();
 
-  getAll.onsuccess = function() {
+  getAll.onsuccess = function () {
+    console.log("Attempting to send to database");
     if (getAll.result.length > 0) {
       fetch("/api/transaction/bulk", {
         method: "POST",
@@ -60,6 +65,7 @@ function checkDatabase() {
         const store = transaction.objectStore("pending");
 
         // clear all items in your store
+        console.log("clearing items from object store");
         store.clear();
       });
     }
