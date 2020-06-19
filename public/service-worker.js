@@ -3,7 +3,8 @@ const FILES_TO_CACHE = [
   "/index.html",
   "/style.css",
   "/index.js",
-  "/manifest.webmanifest",
+  "/db.js",
+  "/manifest.json",
   "/icons/icon-192x192.png",
   "/icons/icon-512x512.png"
 ];
@@ -23,7 +24,7 @@ self.addEventListener("install", function (evt) {
   self.skipWaiting();
 });
 
-self.addEventListener("activate", function (evt) {
+self.addEventListener("activate", (evt) => {
   evt.waitUntil(
     caches.keys().then((keyList) => {
       return Promise.all(
@@ -41,7 +42,7 @@ self.addEventListener("activate", function (evt) {
 });
 
 // fetch
-self.addEventListener("fetch", function (evt) {
+self.addEventListener("fetch", (evt) => {
   // cache successful requests to the API
   if (evt.request.url.includes("/api/")) {
     evt.respondWith(
